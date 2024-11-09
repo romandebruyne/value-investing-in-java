@@ -21,10 +21,11 @@ public class MorningstarScraper {
 	private static final String BASE_URL = "https://www.morningstar.com/stocks/";
 	private static final String API_KEY = "lstzFDEOhfFNMLikKa0am9mgEKLBl49T";
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-			+ "(KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 OPR/99.0.0.0";
-	
+			+ "(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0";
+	 
 	private MorningstarScraper() {}
 	
+	@Deprecated
 	/*
 	 * Obtains unique stock identifier used on Morningstar.com.
 	 * 
@@ -35,9 +36,9 @@ public class MorningstarScraper {
 	 */
 	public static String getMorningstarIdentifier(String exchangeTicker, String stockTicker) {
 		Document doc = null;
-		String morningstarIdentifier = null;
+		String morningstarIdentifier = null, dataAsString = null; 
 		String completeUrl = BASE_URL + exchangeTicker + "/" + stockTicker + "/valuation";
-		String[] data;
+		int indexOfIdentifier;
 		
 		try {
 			doc = Jsoup
@@ -45,13 +46,9 @@ public class MorningstarScraper {
 					.userAgent(USER_AGENT)
 					.timeout(60 * 1000)
 					.get();
-			data = doc.data().split(",");
-	    	
-			for (int i = 0; i < data.length; i++) {
-	    		if (("\"" + stockTicker + "\"").equals(data[i])) {
-	    			morningstarIdentifier = data[i - 1].replace("\"", "");
-	    		}
-			}
+			dataAsString = doc.data();
+			indexOfIdentifier = dataAsString.indexOf("paragraph") - 15;
+			morningstarIdentifier = dataAsString.substring(indexOfIdentifier, indexOfIdentifier + 11);
 		} catch (IOException e) {
 			System.err.println("Error: cannot get the Morningstar Identifier.");
 		}

@@ -197,6 +197,7 @@ public class DatabaseUtils {
 		return reversedList;
 	}
 	
+	@Deprecated
 	/*
 	 * Builds/creates a complete database containing data from Morningstar.com and estimated data.
 	 * 
@@ -208,6 +209,34 @@ public class DatabaseUtils {
 	public static Map<Metric, List<Double>> buildCompleteDatabase(String exchangeTicker, String stockTicker) {
 		Map<Metric, List<Double>> data = new HashMap<>();
 		String morningstarIdentifier = MorningstarScraper.getMorningstarIdentifier(exchangeTicker, stockTicker);
+		
+		data.putAll(buildGrowthDatabase(morningstarIdentifier));
+		
+		data.putAll(MorningstarScraper.getEfficiencyData(
+				MorningstarScraper.getUrlByCategory(EFFICIENCY, morningstarIdentifier)));
+		
+		data.putAll(MorningstarScraper.getFinancialHealthData(
+				MorningstarScraper.getUrlByCategory(FINANCIAL_HEALTH, morningstarIdentifier)));
+		
+		data.putAll(buildCashflowDatabase(morningstarIdentifier));
+		
+		data.putAll(MorningstarScraper.getDividendsData(
+				MorningstarScraper.getUrlByCategory(PAYOUTS, morningstarIdentifier)));
+		
+		data.putAll(estimateHistoricalCapExData(data.get(REVENUE), data.get(CAP_EX_TO_REVENUE)));
+		data.remove(CAP_EX_TO_REVENUE);
+
+		data.putAll(estimateHistoricalSharesData(data.get(FREE_CASHFLOW), data.get(FREE_CASHFLOW_TO_SHARES)));
+		data.remove(FREE_CASHFLOW_TO_SHARES);
+		
+		data.putAll(estimateHistoricalEquityRatioData(data.get(BVPS), data.get(OUTSTANDING_SHARES),
+				data.get(NET_INCOME), data.get(ROA)));
+		
+		return data;
+	}
+	
+	public static Map<Metric, List<Double>> buildCompleteDatabase(String morningstarIdentifier) {
+		Map<Metric, List<Double>> data = new HashMap<>();
 		
 		data.putAll(buildGrowthDatabase(morningstarIdentifier));
 		

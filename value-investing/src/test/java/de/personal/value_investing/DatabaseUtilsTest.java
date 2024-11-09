@@ -22,7 +22,7 @@ public class DatabaseUtilsTest {
 	@Test
 	@DisplayName("Build complete database.")
 	public void testBuildCompleteDatabase() {
-		this.data = new Database("AAPL", "XNAS");
+		this.data = new Database("AAPL", "XNAS", "0P000000GY");
 		CSVWriter.writeMorningstarDataToCSV(this.data.getData(), "test_data_" + LocalDate.now() + ".csv");
 		Assertions.assertEquals(24, this.data.getData().keySet().size());
 	}

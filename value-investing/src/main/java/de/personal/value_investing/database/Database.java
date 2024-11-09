@@ -12,10 +12,17 @@ public class Database {
 	private String exchangeTicker;
 	private Map<Metric, List<Double>> data;
 	
+	@Deprecated
 	public Database(String stockTicker, String exchangeTicker) {
 		this.stockTicker = stockTicker;
 		this.exchangeTicker = exchangeTicker;
 		this.data = DatabaseUtils.buildCompleteDatabase(exchangeTicker, stockTicker);
+	}
+	
+	public Database(String stockTicker, String exchangeTicker, String morningstarIdentifier) {
+		this.stockTicker = stockTicker;
+		this.exchangeTicker = exchangeTicker;
+		this.data = DatabaseUtils.buildCompleteDatabase(morningstarIdentifier);
 	}
 	
 	public Database(String stockTicker, String exchangeTicker, Map<Metric, List<Double>> data) {
