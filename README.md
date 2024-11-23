@@ -1,4 +1,4 @@
-## Value Investing Project
+## Value Investing in Java
 
 ### Introduction
 
